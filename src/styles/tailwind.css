@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Primary Colors */
+  --color-primary: #1E293B; /* Deep slate (slate-800) */
+  --color-secondary: #3B82F6; /* Strategic blue (blue-500) */
+  --color-accent: #F59E0B; /* Amber (amber-500) */
+  
+  /* Background Colors */
+  --color-background: #FAFAFA; /* Warm off-white (gray-50) */
+  --color-surface: #FFFFFF; /* Pure white */
+  
+  /* Text Colors */
+  --color-text-primary: #111827; /* Near-black (gray-900) */
+  --color-text-secondary: #6B7280; /* Medium gray (gray-500) */
+  
+  /* Status Colors */
+  --color-success: #10B981; /* Professional green (emerald-500) */
+  --color-warning: #F59E0B; /* Amber (amber-500) */
+  --color-error: #EF4444; /* Clear red (red-500) */
+  
+  /* Shadow Variables */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+  /* Border Variables */
+  --border-color: rgba(0, 0, 0, 0.1);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-text-primary font-body;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  
+  /* Remove default focus outlines but keep them for keyboard navigation */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  /* Optional: Add custom focus styles for keyboard navigation */
+  *:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Navigation specific styles */
+  .nav-blur {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  
+  /* Micro-interaction styles */
+  .hover-scale {
+    transition: transform 200ms ease-out, opacity 200ms ease-out;
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+  
+  /* Progressive disclosure animations */
+  .expand-height {
+    transition: height 400ms ease-in-out;
+  }
+  
+  /* Scroll-triggered fade-in */
+  .fade-in {
+    opacity: 0;
+    transition: opacity 400ms ease-out;
+  }
+  
+  .fade-in.visible {
+    opacity: 1;
+  }
+  
+  /* Loading skeleton gradient */
+  .skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+  
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+}
+
+@layer utilities {
+  /* Custom focus styles for accessibility */
+  .focus-visible {
+    @apply outline-none ring-2 ring-secondary ring-offset-2;
+  }
+  
+  /* Text rendering optimization */
+  .text-render-optimized {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
