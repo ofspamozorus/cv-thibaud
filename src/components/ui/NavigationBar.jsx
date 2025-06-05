@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Icon from '../AppIcon';
 
 const NavigationBar = () => {
@@ -6,36 +7,38 @@ const NavigationBar = () => {
   const [activeSection, setActiveSection] = useState('hero-landing-page');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const navigationItems = [
     { 
       id: 'hero-landing-page', 
       label: 'Accueil', 
-      href: '#hero-landing-page',
+      path: '/',
       description: 'Page d\'accueil et présentation'
     },
     { 
       id: 'interactive-experience-timeline', 
       label: 'Expérience', 
-      href: '#interactive-experience-timeline',
+      path: '/interactive-experience-timeline',
       description: 'Parcours professionnel et timeline'
     },
     { 
       id: 'skills-expertise-showcase', 
       label: 'Compétences', 
-      href: '#skills-expertise-showcase',
+      path: '/skills-expertise-showcase',
       description: 'Expertise et compétences techniques'
     },
     { 
       id: 'project-portfolio-case-studies', 
       label: 'Projets', 
-      href: '#project-portfolio-case-studies',
+      path: '/project-portfolio-case-studies',
       description: 'Portfolio et études de cas'
     },
     { 
       id: 'contact-conversion-hub', 
       label: 'Contact', 
-      href: '#contact-conversion-hub',
+      path: '/contact-conversion-hub',
       description: 'Prise de contact et informations'
     }
   ];
@@ -48,39 +51,32 @@ const NavigationBar = () => {
       
       setScrollProgress(scrollPercent);
       setIsScrolled(scrollTop > 20);
-
-      // Update active section based on scroll position
-      const sections = navigationItems.map(item => document.getElementById(item.id)).filter(Boolean);
-      const currentSection = sections.find(section => {
-        const rect = section.getBoundingClientRect();
-        return rect.top <= 100 && rect.bottom >= 100;
-      });
-
-      if (currentSection) {
-        setActiveSection(currentSection.id);
-      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNavClick = (href, id) => {
+  useEffect(() => {
+    // Update active section based on current path
+    const currentPath = location.pathname === '/' ? 'hero-landing-page' : location.pathname.substring(1);
+    setActiveSection(currentPath);
+  }, [location]);
+
+  const handleNavClick = (path, id) => {
     setActiveSection(id);
     setIsMenuOpen(false);
-    
-    // Utiliser la navigation par URL plutôt que le défilement
-    window.location.href = href;
+    navigate(path);
   };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleKeyDown = (event, href, id) => {
+  const handleKeyDown = (event, path, id) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      handleNavClick(href, id);
+      handleNavClick(path, id);
     }
   };
 
@@ -105,8 +101,8 @@ const NavigationBar = () => {
             {/* Logo */}
             <div className="flex-shrink-0">
               <button
-                onClick={() => handleNavClick('#hero-landing-page', 'hero-landing-page')}
-                className="flex items-center space-x-2 text-primary font-heading font-semibold text-xl hover-scale focus-visible"
+                onClick={() => handleNavClick('/', 'hero-landing-page')}
+                className="flex items-center space-x-2 text-primary font-heading font-semibold text-xl hover-scale"
                 aria-label="Retour à l'accueil"
               >
                 <div className="w-8 h-8 bg-gradient-to-br from-secondary to-accent rounded-interactive flex items-center justify-center">
@@ -122,9 +118,9 @@ const NavigationBar = () => {
                 {navigationItems.map((item) => (
                   <button
                     key={item.id}
-                    onClick={() => handleNavClick(item.href, item.id)}
-                    onKeyDown={(e) => handleKeyDown(e, item.href, item.id)}
-                    className={`px-3 py-2 text-sm font-medium transition-all duration-micro ease-micro hover-scale focus-visible ${
+                    onClick={() => handleNavClick(item.path, item.id)}
+                    onKeyDown={(e) => handleKeyDown(e, item.path, item.id)}
+                    className={`px-3 py-2 text-sm font-medium transition-all duration-micro ease-micro hover-scale ${
                       activeSection === item.id
                         ? 'text-accent border-b-2 border-accent' :'text-text-primary hover:text-secondary'
                     }`}
@@ -140,8 +136,8 @@ const NavigationBar = () => {
             {/* Contact CTA - Desktop */}
             <div className="hidden md:block">
               <button
-                onClick={() => handleNavClick('#contact-conversion-hub', 'contact-conversion-hub')}
-                className="bg-accent text-surface px-4 py-2 rounded-interactive text-sm font-medium hover-scale focus-visible transition-all duration-micro ease-micro hover:bg-warning"
+                onClick={() => handleNavClick('/contact-conversion-hub', 'contact-conversion-hub')}
+                className="bg-accent text-surface px-4 py-2 rounded-interactive text-sm font-medium hover-scale transition-all duration-micro ease-micro hover:bg-warning"
               >
                 Me contacter
               </button>
@@ -151,7 +147,7 @@ const NavigationBar = () => {
             <div className="md:hidden">
               <button
                 onClick={toggleMenu}
-                className="inline-flex items-center justify-center p-2 rounded-interactive text-text-primary hover:text-secondary hover:bg-background focus-visible"
+                className="inline-flex items-center justify-center p-2 rounded-interactive text-text-primary hover:text-secondary hover:bg-background"
                 aria-expanded={isMenuOpen}
                 aria-label="Ouvrir le menu de navigation"
               >
@@ -175,9 +171,9 @@ const NavigationBar = () => {
             {navigationItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => handleNavClick(item.href, item.id)}
-                onKeyDown={(e) => handleKeyDown(e, item.href, item.id)}
-                className={`block w-full text-left px-3 py-2 text-base font-medium transition-all duration-micro ease-micro hover-scale focus-visible ${
+                onClick={() => handleNavClick(item.path, item.id)}
+                onKeyDown={(e) => handleKeyDown(e, item.path, item.id)}
+                className={`block w-full text-left px-3 py-2 text-base font-medium transition-all duration-micro ease-micro hover-scale ${
                   activeSection === item.id
                     ? 'text-accent bg-accent/10 border-l-4 border-accent' :'text-text-primary hover:text-secondary hover:bg-background'
                 }`}
@@ -193,8 +189,8 @@ const NavigationBar = () => {
             {/* Mobile Contact CTA */}
             <div className="pt-4 border-t border-border">
               <button
-                onClick={() => handleNavClick('#contact-conversion-hub', 'contact-conversion-hub')}
-                className="w-full bg-accent text-surface px-4 py-3 rounded-interactive text-base font-medium hover-scale focus-visible transition-all duration-micro ease-micro hover:bg-warning"
+                onClick={() => handleNavClick('/contact-conversion-hub', 'contact-conversion-hub')}
+                className="w-full bg-accent text-surface px-4 py-3 rounded-interactive text-base font-medium hover-scale transition-all duration-micro ease-micro hover:bg-warning"
               >
                 Me contacter
               </button>
